@@ -1,21 +1,38 @@
-
+-------------------------------------------------------------------------------
+-- TRP3 Currently Frame by Tammya-Moonguard (2018)
+--
+-- Adds a standalone frame to edit your currently status.
+-------------------------------------------------------------------------------
 local Me = {}
 
+local CONFIG_POS_X = "CONFIG_TRP3CURRENTLYFRAME_POS_X";
+local CONFIG_POS_Y = "CONFIG_TRP3CURRENTLYFRAME_POS_Y";
+local CONFIG_POS_A = "CONFIG_TRP3CURRENTLYFRAME_POS_A";
+local CONFIG_SHOW  = "CONFIG_TRP3CURRENTLYFRAME_SHOW";
+
+-------------------------------------------------------------------------------
+-- Called when the module is initialized.
+--
 local function onInit()
-	local self = Me
-	
-	self.frame = CreateFrame( "Frame", "TRP3CurrentlyFrame", UIParent, "TRP3CurrentlyTemplate" )
-	self.frame.host = self
+	Me.frame = CreateFrame( "Frame", "TRP3CurrentlyFrame", UIParent, "TRP3CurrentlyTemplate" )
+	Me.frame.host = Me
 end
 
+-------------------------------------------------------------------------------
+-- Show or hide the frame depending on settings.
+--
 local function updateShow()
-	if TRP3_API.profile.getData( "player/character/RP" ) == 1 then
+	if TRP3_API.profile.getData( "player/character/RP" ) == 1
+	   and TRP3_API.configuration.getValue(CONFIG_SHOW) then
 		Me.frame:Show()
 	else
 		Me.frame:Hide()
 	end
 end
 
+-------------------------------------------------------------------------------
+-- Secondary initialization.
+--
 local function onStart()
 
 	local self = Me
@@ -28,18 +45,36 @@ local function onStart()
 		
 	end
 
-	local CONFIG_POS_X = "CONFIG_TRP3CURRENTLYFRAME_POS_X";
-	local CONFIG_POS_Y = "CONFIG_TRP3CURRENTLYFRAME_POS_Y";
-	local CONFIG_POS_A = "CONFIG_TRP3CURRENTLYFRAME_POS_A";
-
 	TRP3_API.configuration.registerConfigKey( CONFIG_POS_A, "TOP" );
 	TRP3_API.configuration.registerConfigKey( CONFIG_POS_X, 0 );
 	TRP3_API.configuration.registerConfigKey( CONFIG_POS_Y, -60 );
+	TRP3_API.configuration.registerConfigKey( CONFIG_SHOW, true );
+	
+	-- Build configuration page (todo: localization)
+	tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
+		inherit = "TRP3_ConfigH1";
+		title   = "Currently frame";
+	});
+	
+	tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
+		inherit   = "TRP3_ConfigCheck";
+		title     = "Show frame";
+		help      = "Show or hide the currently frame. " ..
+					"You can also hide the frame by setting your OOC flag, " ..
+					"but this is useful if you're only interested in the /cur command.";
+		configKey = CONFIG_SHOW;
+	});
+	
+	-- handler for when the show toggle is changed.
+	TRP3_API.configuration.registerHandler( CONFIG_SHOW, function()
+		updateShow()
+	end);
 	
 	function Me:ResetConfig()
 		TRP3_API.configuration.setValue( CONFIG_POS_A, "TOP" );
 		TRP3_API.configuration.setValue( CONFIG_POS_X, 0 );
 		TRP3_API.configuration.setValue( CONFIG_POS_Y, -60 );
+		TRP3_API.configuration.setValue( CONFIG_SHOW, true );
 	end	
 
 	Me.frame:ClearAllPoints()
@@ -113,19 +148,19 @@ local function onStart()
 			Me.frame.text:ClearFocus()
 		end
 	end)
-	
-	
 end
  
--------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- Module information.
+--
 local MODULE_STRUCTURE = {
-	["name"] = "Currently Frame",
+	["name"]        = "Currently Frame",
 	["description"] = "Adds a global window to view and edit Currently easily.",
-	["version"] = 1.000,
-	["id"] = "trp3_currently_frame",
-	["onStart"] = onStart,
-	["onInit"] = onInit,
-	["minVersion"] = 3,
+	["version"]     = 1.2,
+	["id"]          = "trp3_currently_frame",
+	["onStart"]     = onStart,
+	["onInit"]      = onInit,
+	["minVersion"]  = 3,
 };
 
 TRP3_API.module.registerModule( MODULE_STRUCTURE );

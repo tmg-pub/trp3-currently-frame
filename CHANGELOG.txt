@@ -1,3 +1,9 @@
+## 1.2
+Patch 7.3.5 update. Happy Lunar Festival!
+
+Added option for hiding the frame, in Frame Settings. (Requested by Managosa)
+
+
 ## 1.1.4
 Patch 7.3 compatibility.
 
