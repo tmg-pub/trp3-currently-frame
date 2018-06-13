@@ -3,6 +3,7 @@
 --
 -- Adds a standalone frame to edit your currently status.
 -------------------------------------------------------------------------------
+
 local _, Me = ...
 
 local L = TRP3_API.loc
@@ -16,9 +17,14 @@ local CONFIG_SHOW  = "CONFIG_TRP3CURRENTLYFRAME_SHOW";
 -- Called when the module is initialized.
 --
 local function onInit()
+	Me.AddLocales()
 	L = TRP3_API.loc
+	
 	Me.frame = CreateFrame( "Frame", "TRP3CurrentlyFrame", UIParent, "TRP3CurrentlyTemplate" )
 	Me.frame.host = Me
+	
+	-- Set the currently frame's caption.
+	Me.frame.caption.label:SetText( L.REG_PLAYER_CURRENT )
 end
 
 -------------------------------------------------------------------------------
@@ -36,6 +42,7 @@ local function updateFrame()
 	
 	-- Update text from profile currently.
 	Me.frame.text:SetText( TRP3_API.profile.getData("player/character").CU or "" )
+	
 end
 
 -------------------------------------------------------------------------------
@@ -52,12 +59,13 @@ local function onStart()
 
 	local self = Me
 	TRP3_API.currently_frame = Me;
-	Me.SetLocale( TRP3_API.loc:GetActiveLocale():GetCode() )
 	
 	SlashCmdList.CUR = SlashCommandCur
 	SLASH_CUR1 = "/cur"
-	if L["/cur"] ~= "/cur" then
-		SLASH_CUR2 = L["/cur"]
+	
+	-- Add another slash command if it's in the translations for this locale.
+	if L.CURFRAME_SLASH_CMD ~= "/cur" then
+		SLASH_CUR2 = L.CURFRAME_SLASH_CMD
 	end
 
 	TRP3_API.configuration.registerConfigKey( CONFIG_POS_A, "TOP" );
@@ -68,13 +76,13 @@ local function onStart()
 	-- Build configuration page (todo: localization)
 	tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
 		inherit = "TRP3_ConfigH1";
-		title   = CURFRAME_CONFIG_HEADER;
+		title   = L.CURFRAME_CO_HEADER;
 	});
 	
 	tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
 		inherit   = "TRP3_ConfigCheck";
-		title     = CURFRAME_SHOW_FRAMEL["Show frame"];
-		help      = L["SHOW_FRAME_HELP"];
+		title     = L.CURFRAME_CO_SHOW_FRAME;
+		help      = L.CURFRAME_CO_SHOW_FRAME_HELP;
 		configKey = CONFIG_SHOW;
 	});
 	
@@ -165,7 +173,7 @@ end
 local MODULE_STRUCTURE = {
 	["name"]        = "Currently Frame",
 	["description"] = "Adds a global window to view and edit Currently easily.",
-	["version"]     = 1.2,
+	["version"]     = 1.3,
 	["id"]          = "trp3_currently_frame",
 	["onStart"]     = onStart,
 	["onInit"]      = onInit,

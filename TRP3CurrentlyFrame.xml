@@ -37,7 +37,7 @@
 				<Size x="150" y="20"/>
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentCaption" text="Currently" inherits="GameFontNormal"
+						<FontString parentKey="label" name="$parentCaption" text="Currently" inherits="GameFontNormal"
 									wordwrap="false">
 							<Anchors>
 								<Anchor point="LEFT" x="10" y="2"/>
@@ -81,6 +81,7 @@
 	</Frame>
   
 	
+	<Script file="Locale.lua"/>
 	<Script file="TRP3CurrentlyFrame.lua"/>
 
 </Ui>

@@ -1,6 +1,6 @@
 ## Interface: 70300
 ## Title: TRP3 Currently Frame
-## Version: 1.2
+## Version: 1.3
 ## Notes: Adds a window for editing Currently status.
 ## Author: Tammya-MoonGuard
 ## Dependencies: TotalRP3
