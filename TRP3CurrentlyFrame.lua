@@ -3,7 +3,9 @@
 --
 -- Adds a standalone frame to edit your currently status.
 -------------------------------------------------------------------------------
-local Me = {}
+local _, Me = ...
+
+local L = TRP3_API.loc
 
 local CONFIG_POS_X = "CONFIG_TRP3CURRENTLYFRAME_POS_X";
 local CONFIG_POS_Y = "CONFIG_TRP3CURRENTLYFRAME_POS_Y";
@@ -14,20 +16,33 @@ local CONFIG_SHOW  = "CONFIG_TRP3CURRENTLYFRAME_SHOW";
 -- Called when the module is initialized.
 --
 local function onInit()
+	L = TRP3_API.loc
 	Me.frame = CreateFrame( "Frame", "TRP3CurrentlyFrame", UIParent, "TRP3CurrentlyTemplate" )
 	Me.frame.host = Me
 end
 
 -------------------------------------------------------------------------------
--- Show or hide the frame depending on settings.
+-- Update frame display.
 --
-local function updateShow()
+local function updateFrame()
+
+	-- Update visibility.
 	if TRP3_API.profile.getData( "player/character/RP" ) == 1
 	   and TRP3_API.configuration.getValue(CONFIG_SHOW) then
 		Me.frame:Show()
 	else
 		Me.frame:Hide()
 	end
+	
+	-- Update text from profile currently.
+	Me.frame.text:SetText( TRP3_API.profile.getData("player/character").CU or "" )
+end
+
+-------------------------------------------------------------------------------
+-- The /cur slash command.
+--
+local function SlashCommandCur( msg )
+	Me:SetCurrently( msg )
 end
 
 -------------------------------------------------------------------------------
@@ -37,12 +52,12 @@ local function onStart()
 
 	local self = Me
 	TRP3_API.currently_frame = Me;
+	Me.SetLocale( TRP3_API.loc:GetActiveLocale():GetCode() )
 	
+	SlashCmdList.CUR = SlashCommandCur
 	SLASH_CUR1 = "/cur"
-	
-	function SlashCmdList.CUR( msg )
-		Me:SetCurrently( msg )
-		
+	if L["/cur"] ~= "/cur" then
+		SLASH_CUR2 = L["/cur"]
 	end
 
 	TRP3_API.configuration.registerConfigKey( CONFIG_POS_A, "TOP" );
@@ -53,21 +68,19 @@ local function onStart()
 	-- Build configuration page (todo: localization)
 	tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
 		inherit = "TRP3_ConfigH1";
-		title   = "Currently frame";
+		title   = CURFRAME_CONFIG_HEADER;
 	});
 	
 	tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
 		inherit   = "TRP3_ConfigCheck";
-		title     = "Show frame";
-		help      = "Show or hide the currently frame. " ..
-					"You can also hide the frame by setting your OOC flag, " ..
-					"but this is useful if you're only interested in the /cur command.";
+		title     = CURFRAME_SHOW_FRAMEL["Show frame"];
+		help      = L["SHOW_FRAME_HELP"];
 		configKey = CONFIG_SHOW;
 	});
 	
 	-- handler for when the show toggle is changed.
 	TRP3_API.configuration.registerHandler( CONFIG_SHOW, function()
-		updateShow()
+		updateFrame()
 	end);
 	
 	function Me:ResetConfig()
@@ -114,33 +127,27 @@ local function onStart()
 		local character = TRP3_API.profile.getData("player/character");
 		local old = character.CU;
 		character.CU = self.frame.text:GetText();
-		if old ~= character.CU then
-			character.v = TRP3_API.utils.math.incrementNumber(character.v or 1, 2);
-			TRP3_API.events.fireEvent( 
-				TRP3_API.events.REGISTER_DATA_UPDATED,
-				TRP3_API.globals.player_id, 
-				TRP3_API.profile.getPlayerCurrentProfileID(), 
-				"character"
-			);
-			
-			local context = TRP3_API.navigation.page.getCurrentContext()
-			if context and context.isPlayer then
-				TRP3_RegisterMiscViewCurrentlyICScrollText:SetText( character.CU or "" )
-			end
+		if old == character.CU then return end
+		
+		character.v = TRP3_API.utils.math.incrementNumber(character.v or 1, 2);
+		TRP3_API.events.fireEvent( 
+			TRP3_API.events.REGISTER_DATA_UPDATED,
+			TRP3_API.globals.player_id, 
+			TRP3_API.profile.getPlayerCurrentProfileID(), 
+			"character"
+		);
+		
+		local context = TRP3_API.navigation.page.getCurrentContext()
+		if context and context.isPlayer then
+			TRP3_RegisterMiscViewCurrentlyICScrollText:SetText( character.CU or "" )
 		end
 	end
 	
 	TRP3_API.events.listenToEvent( TRP3_API.events.REGISTER_DATA_UPDATED, function( player_id, profileID )
 		if player_id == TRP3_API.globals.player_id then
-			updateShow()
-			Me.frame.text:SetText( TRP3_API.profile.getData("player/character").CU or "" )
+			updateFrame()
 		end
 	end)
-	
-	local character = TRP3_API.profile.getData("player/character");
-	Me.frame.text:SetText( character.CU or "" )
-	
-	updateShow()
 	
 	-- clear focus when clicking world frame
 	WorldFrame:HookScript( "OnMouseDown", function()
@@ -148,6 +155,8 @@ local function onStart()
 			Me.frame.text:ClearFocus()
 		end
 	end)
+	
+	updateFrame()
 end
  
 ------------------------------------------------------------------------------
