@@ -4,7 +4,7 @@
 -- Adds a standalone frame to edit your currently status.
 -------------------------------------------------------------------------------
 
-local _, Me = ...
+local addonName, Me = ...
 
 local L = TRP3_API.loc
 
@@ -168,16 +168,24 @@ local function onStart()
 end
  
 ------------------------------------------------------------------------------
--- Module information.
+-- Register with TRP3.
 --
-local MODULE_STRUCTURE = {
-	["name"]        = "Currently Frame",
-	["description"] = "Adds a global window to view and edit Currently easily.",
-	["version"]     = 1.3,
-	["id"]          = "trp3_currently_frame",
-	["onStart"]     = onStart,
-	["onInit"]      = onInit,
-	["minVersion"]  = 3,
+local MODULE_INFO = {
+
+	-- copy info over from the TOC file
+	--
+	["name"]        = GetAddOnMetadata( addonName, "Title" );
+	["description"] = GetAddOnMetadata( addonName, "Notes" );
+	
+	-- we are cutting off the minor version for the two-figure version number
+	-- in the module
+	--
+	["version"]     = tonumber( GetAddOnMetadata( addonName, "Version" ):match("^%d+%.%d+") );
+	
+	["id"]          = "trp3_currently_frame";
+	["onStart"]     = onStart;
+	["onInit"]      = onInit;
+	["minVersion"]  = 3;
 };
 
-TRP3_API.module.registerModule( MODULE_STRUCTURE );
+TRP3_API.module.registerModule( MODULE_INFO );

@@ -1,7 +1,9 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: TRP3 Currently Frame
-## Version: 1.3
-## Notes: Adds a window for editing Currently status.
+## Title-frFR: TRP3 Cadre Actuellement
+## Version: 1.4
+## Notes: Adds a window for editing your Currently.
+## Notes-frFR: Ajoute un fenêtre pour fair des redactions dans ton Actuellement.
 ## Author: Tammya-MoonGuard
 ## Dependencies: TotalRP3
 ## SavedVariables: TRP3CurrentlyFrameSaved
