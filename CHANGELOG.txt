@@ -1,3 +1,7 @@
+## 1.5
+Fix error at startup.
+
+
 ## 1.4
 Patch 8.0.0 update. RIP Darnassus.
 
