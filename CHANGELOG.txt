@@ -1,3 +1,11 @@
+## 1.6
+Portuguese translations by brightkanar!
+
+Added ElvUI skin support.
+
+Centered header, even though I liked it the other way.
+
+
 ## 1.5
 Fix error at startup.
 

@@ -157,6 +157,51 @@ local function onStart()
 		end
 	end)
 	
+	-- 1.6 offers support for ElvUI skinning. It's kind of wonky how this is
+	--  done, but it works out...
+	TRP3_API.Events.registerCallback(
+	                             TRP3_API.Events.WORKFLOW_ON_FINISH, function()
+		-- Check if the ElvUI support module is loaded. We're using it to
+		--  determine if we want to skin ourselves or not. It's not the most 
+		--  intuitive thing - piggybacking off of the "target frame" skinning,
+		--  but an extra option is just clunky. -Maybe- it might be best in the
+		--  future if the ElvUI section of the configuration had our own option
+		--  shown.
+		if TRP3_API.module.isModuleLoaded("trp3_elvui") then
+			if TRP3_API.configuration.getValue( "elvui_skin_target_frame" ) then
+				if not ElvUI[1] then return end
+				
+				local function SkinFrames()
+					local ElvUI_Tooltip = ElvUI[1]:GetModule('Tooltip');
+					ElvUI_Tooltip:SetStyle( Me.frame )
+					ElvUI_Tooltip:SetStyle( Me.frame.caption )
+					
+					-- Adjust a few things. Normally the label is 1px above the
+					--  center, because it works better with the default font.
+					-- ElvUI font makes it look off centered and ugly, so we
+					--  reset the anchor here.
+					-- We also make the background color solid for the label.
+					--  Not 100% sure if it's the right color, because this is
+					--  just for tooltips, but it looks close enough.
+					local r, g, b = Me.frame.caption:GetBackdropColor()
+					Me.frame.caption:SetBackdropColor(r, g, b, 1)
+					Me.frame.caption.label:SetPoint( "CENTER" )
+				end
+				
+				if not ElvUI[1].initialized then
+					-- ElvUI isn't fully initialized yet, and we will error
+					--  if we try to use the tooltip module right now. Defer
+					--  action until we're sure everything is loaded. We could
+					--  hook their initialization routine or do something else.
+					hooksecurefunc( ElvUI[1], "Initialize", SkinFrames )
+				else
+					SkinFrames()
+				end
+			end
+		end
+		
+	end)
+	
 	-- clear focus when clicking world frame
 	WorldFrame:HookScript( "OnMouseDown", function()
 		if Me.frame.text:HasFocus() then

@@ -40,15 +40,14 @@
 						<FontString parentKey="label" name="$parentCaption" text="Currently" inherits="GameFontNormal"
 									wordwrap="false">
 							<Anchors>
-								<Anchor point="LEFT" x="10" y="2"/>
-								<Anchor point="RIGHT" x="-10" y="2"/>
+                <Anchor point="CENTER" y="1" />
 							</Anchors>
 							<Color r="0.95" g="0.95" b="0.95"/>
 						</FontString>
 					</Layer>
 				</Layers>
 				<Anchors>
-					<Anchor point="TOPLEFT" x="16" y="10"/>
+					<Anchor point="TOP" x="0" y="10"/>
 				</Anchors>
 			</Frame>
       

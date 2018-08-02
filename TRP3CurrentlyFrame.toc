@@ -1,9 +1,11 @@
 ## Interface: 80000
 ## Title: TRP3 Currently Frame
 ## Title-frFR: TRP3 Cadre Actuellement
-## Version: 1.5
+## Title-ptBR: TRP3 - Janela p/ o Atualmente
+## Version: 1.6
 ## Notes: Adds a window for editing your Currently.
 ## Notes-frFR: Ajoute un fenêtre pour fair des redactions dans ton Actuellement.
+## Title-ptBR: Adiciona uma janela para editar o seu Atualmente.
 ## Author: Tammya-MoonGuard
 ## Dependencies: TotalRP3
 ## SavedVariables: TRP3CurrentlyFrameSaved
