@@ -1,11 +1,17 @@
-## Interface: 80000
+## Interface: 80100
 ## Title: TRP3 Currently Frame
 ## Title-frFR: TRP3 Cadre Actuellement
 ## Title-ptBR: TRP3 - Janela p/ o Atualmente
-## Version: 1.6
+## Title-deDE: TRP3 "Aktuelles" Fenster
+## Title-zhCN: TRP3当前状况框架
+## Title-zhTW: TRP3當前狀況框架
+## Version: 1.7
 ## Notes: Adds a window for editing your Currently.
-## Notes-frFR: Ajoute un fen�tre pour fair des redactions dans ton Actuellement.
-## Title-ptBR: Adiciona uma janela para editar o seu Atualmente.
+## Notes-frFR: Ajoute un fenêtre pour fair des redactions dans ton Actuellement.
+## Notes-ptBR: Adiciona uma janela para editar o seu Atualmente.
+## Notes-deDE: Öffnet ein Fenster, in welchem du dein "Aktuelles" bearbeiten kannst.
+## Notes-zhCN: 添加一个用于编辑当前状况的窗口。
+## Notes-zhTW: 添加一個用於編輯當前狀況的窗口。
 ## Author: Tammya-MoonGuard
 ## Dependencies: TotalRP3
 ## SavedVariables: TRP3CurrentlyFrameSaved

@@ -1,3 +1,9 @@
+## 1.7
+The long awaited TOC bump.
+
+German translations by KnuxSD59624. Chinese translations by lywormwood.
+
+
 ## 1.6
 Portuguese translations by brightkanar!
 
