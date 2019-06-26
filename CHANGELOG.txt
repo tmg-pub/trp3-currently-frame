@@ -1,3 +1,7 @@
+## 1.8
+Update for Patch 8.2.
+
+
 ## 1.7
 The long awaited TOC bump.
 
