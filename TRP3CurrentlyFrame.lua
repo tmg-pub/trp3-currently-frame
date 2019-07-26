@@ -55,7 +55,7 @@ local function updateFrame()
 
    -- Update visibility.
    if TRP3_API.profile.getData( "player/character/RP" ) == 1
-      and TRP3_API.configuration.getValue(CONFIG_SHOW) then
+                          and TRP3_API.configuration.getValue(CONFIG_SHOW) then
       Me.frame:Show()
       if show_ooc then
          Me.frame.textooc:Show()
@@ -156,23 +156,22 @@ local function onStart()
       TRP3_API.configuration.getValue(CONFIG_POS_Y));
    
    Me.frame:SetMovable(true) 
-   Me.frame.caption:SetScript("OnMouseDown", function(self, button )
-      
-     if button == "LeftButton" then
-      Me.frame:StartMoving();
-     end
-   end);
-   Me.frame.caption:SetScript("OnMouseUp", function(self, button)
-        if button == "LeftButton" then
-         Me.frame:StopMovingOrSizing();
-         local anchor, _, _, x, y = Me.frame:GetPoint(1);
-      
-         TRP3_API.configuration.setValue( CONFIG_POS_A, anchor );
-         TRP3_API.configuration.setValue( CONFIG_POS_X, x );
-         TRP3_API.configuration.setValue( CONFIG_POS_Y, y );
-        end
-   end);
+   Me.frame.caption:SetScript( "OnMouseDown", function( self, button )
+      if button == "LeftButton" then
+         Me.frame:StartMoving()
+      end
+   end)
    
+   Me.frame.caption:SetScript( "OnMouseUp", function( self, button )
+      if button == "LeftButton" then
+         Me.frame:StopMovingOrSizing()
+         local anchor, _, _, x, y = Me.frame:GetPoint(1)
+
+         TRP3_API.configuration.setValue( CONFIG_POS_A, anchor )
+         TRP3_API.configuration.setValue( CONFIG_POS_X, x )
+         TRP3_API.configuration.setValue( CONFIG_POS_Y, y )
+      end
+   end)
    
    function Me:SetCurrently( text, ooc )
       if not ooc then
@@ -207,6 +206,8 @@ local function onStart()
       end
       
       if changed then
+         -- Update profile version (v) and then trigger an event for other
+         --  TRP handlers.
          character.v = TRP3_API.utils.math.incrementNumber(character.v or 1, 2)
          TRP3_API.events.fireEvent( 
             TRP3_API.events.REGISTER_DATA_UPDATED,
@@ -217,7 +218,8 @@ local function onStart()
       end
    end
    
-   TRP3_API.events.listenToEvent( TRP3_API.events.REGISTER_DATA_UPDATED, function( player_id, profileID )
+   TRP3_API.events.listenToEvent( TRP3_API.events.REGISTER_DATA_UPDATED,
+                                               function( player_id, profileID )
       if player_id == TRP3_API.globals.player_id then
          updateFrame()
       end
@@ -268,10 +270,14 @@ local function onStart()
       
    end)
    
-   -- clear focus when clicking world frame
+   -- If the user clicks on the world (screen with no UI element), remove
+   --  focus from the frames.
    WorldFrame:HookScript( "OnMouseDown", function()
       if Me.frame.text:HasFocus() then
          Me.frame.text:ClearFocus()
+      end
+      if Me.frame.textooc:HasFocus() then
+         Me.frame.textooc:ClearFocus()
       end
    end)
    
