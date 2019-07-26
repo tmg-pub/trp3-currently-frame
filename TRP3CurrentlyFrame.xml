@@ -70,9 +70,7 @@
         </Scripts>
         <FontString inherits="ChatFontSmall"/>
       </EditBox>
-      
-      
-                
+            
       <EditBox name="$parentTextooc" parentKey="textooc" multiLine="true" enableMouse="false" autoFocus="false">
 				<Anchors>
 					<Anchor point="TOP" relativeKey="$parent.text" relativePoint="BOTTOM" y="-25"/>
@@ -104,9 +102,7 @@
           </OnEditFocusLost>
         </Scripts>
         <FontString inherits="ChatFontSmall"/>
-      </EditBox>  
-     
-       
+      </EditBox>
     </Frames>
 	</Frame>
   

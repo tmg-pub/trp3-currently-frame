@@ -1,3 +1,7 @@
+## 1.9
+An OOC currently editor was added; it's disabled by default and accessible through the Frames settings in TRP3.
+
+
 ## 1.8
 Update for Patch 8.2.
 
