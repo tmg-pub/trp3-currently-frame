@@ -30,20 +30,13 @@ local function onInit()
    Me.frame.textooc.label:SetText( L.CM_OOC )
    
    Me.frame.UpdateHeight = function( self )
-      local name, fontHeight = self.text:GetFont()
-      local height = self.text:GetHeight() + fontHeight + 14
-      -- Not actually sure what's going on here.
-      -- Height is calculated as sum from:
-      -- 14 (base height)
-      -- text content height + ???
-      -- additional offset if ooc is shown
-      
-      if TRP3_API.configuration.getValue( CONFIG_SHOW_OOC ) then
-         local name, fontHeight = self.textooc:GetFont()
-         height = height + self.textooc:GetHeight() + fontHeight
+   
+      if not TRP3_API.configuration.getValue( CONFIG_SHOW_OOC ) then
+         self:SetHeight( -(self.text:GetBottom() - self:GetTop()) + 14 )
+      else
+         self:SetHeight( -(self.textooc:GetBottom() - self:GetTop()) + 14 )
       end
       
-      self:SetHeight( height )
    end
 end
 
