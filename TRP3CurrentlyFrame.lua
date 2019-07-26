@@ -12,6 +12,7 @@ local CONFIG_POS_X = "CONFIG_TRP3CURRENTLYFRAME_POS_X";
 local CONFIG_POS_Y = "CONFIG_TRP3CURRENTLYFRAME_POS_Y";
 local CONFIG_POS_A = "CONFIG_TRP3CURRENTLYFRAME_POS_A";
 local CONFIG_SHOW  = "CONFIG_TRP3CURRENTLYFRAME_SHOW";
+local CONFIG_SHOW_OOC  = "CONFIG_TRP3CURRENTLYFRAME_SHOW_OOC";
 
 -------------------------------------------------------------------------------
 -- Called when the module is initialized.
@@ -25,24 +26,50 @@ local function onInit()
 	
 	-- Set the currently frame's caption.
 	Me.frame.caption.label:SetText( L.REG_PLAYER_CURRENT )
+   Me.frame.textooc.label:SetText( L.CM_OOC )
+   
+   Me.frame.UpdateHeight = function( self )
+      local name, fontHeight = self.text:GetFont()
+      local height = self.text:GetHeight() + fontHeight + 14
+      -- Not actually sure what's going on here.
+      -- Height is calculated as sum from:
+      -- 14 (base height)
+      -- text content height + ???
+      -- additional offset if ooc is shown
+      
+      if TRP3_API.configuration.getValue( CONFIG_SHOW_OOC ) then
+         local name, fontHeight = self.textooc:GetFont()
+         height = height + self.textooc:GetHeight() + fontHeight
+      end
+      
+      self:SetHeight( height )
+   end
 end
 
 -------------------------------------------------------------------------------
 -- Update frame display.
 --
 local function updateFrame()
+   local show_ooc = TRP3_API.configuration.getValue( CONFIG_SHOW_OOC )
 
 	-- Update visibility.
 	if TRP3_API.profile.getData( "player/character/RP" ) == 1
 	   and TRP3_API.configuration.getValue(CONFIG_SHOW) then
 		Me.frame:Show()
+      if show_ooc then
+         Me.frame.textooc:Show()
+      else
+         Me.frame.textooc:Hide()
+      end
 	else
 		Me.frame:Hide()
 	end
-	
+   
 	-- Update text from profile currently.
 	Me.frame.text:SetText( TRP3_API.profile.getData("player/character").CU or "" )
-	
+   Me.frame.textooc:SetText( TRP3_API.profile.getData("player/character").CO or "" )
+   
+   Me.frame:UpdateHeight()
 end
 
 -------------------------------------------------------------------------------
@@ -50,6 +77,13 @@ end
 --
 local function SlashCommandCur( msg )
 	Me:SetCurrently( msg )
+end
+
+-------------------------------------------------------------------------------
+-- The /cooc slash command.
+--
+local function SlashCommandCooc( msg )
+   Me:SetCurrently( msg, true )
 end
 
 -------------------------------------------------------------------------------
@@ -61,17 +95,24 @@ local function onStart()
 	TRP3_API.currently_frame = Me;
 	
 	SlashCmdList.CUR = SlashCommandCur
-	SLASH_CUR1 = "/cur"
+   SlashCmdList.COOC = SlashCommandCooc
+	SLASH_CUR1  = "/cur"
+	SLASH_COOC1 = "/cooc"
 	
-	-- Add another slash command if it's in the translations for this locale.
+	-- Add alternat slash commands if the translation is different.
 	if L.CURFRAME_SLASH_CMD ~= "/cur" then
 		SLASH_CUR2 = L.CURFRAME_SLASH_CMD
 	end
+   
+   if L.CURFRAME_SLASH_CMD2 ~= "/cooc" then
+      SLASH_COOC2 = L.CURFRAME_SLASH_CMD2
+   end
 
 	TRP3_API.configuration.registerConfigKey( CONFIG_POS_A, "TOP" );
 	TRP3_API.configuration.registerConfigKey( CONFIG_POS_X, 0 );
 	TRP3_API.configuration.registerConfigKey( CONFIG_POS_Y, -60 );
 	TRP3_API.configuration.registerConfigKey( CONFIG_SHOW, true );
+	TRP3_API.configuration.registerConfigKey( CONFIG_SHOW_OOC, false );
 	
 	-- Build configuration page (todo: localization)
 	tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
@@ -85,11 +126,17 @@ local function onStart()
 		help      = L.CURFRAME_CO_SHOW_FRAME_HELP;
 		configKey = CONFIG_SHOW;
 	});
+   
+	tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
+		inherit   = "TRP3_ConfigCheck";
+		title     = L.CURFRAME_CO_SHOW_OOC;
+		help      = L.CURFRAME_CO_SHOW_OOC_HELP;
+		configKey = CONFIG_SHOW_OOC;
+	});
 	
 	-- handler for when the show toggle is changed.
-	TRP3_API.configuration.registerHandler( CONFIG_SHOW, function()
-		updateFrame()
-	end);
+	TRP3_API.configuration.registerHandler( CONFIG_SHOW, updateFrame )
+	TRP3_API.configuration.registerHandler( CONFIG_SHOW_OOC, updateFrame )
 	
 	function Me:ResetConfig()
 		TRP3_API.configuration.setValue( CONFIG_POS_A, "TOP" );
@@ -126,29 +173,47 @@ local function onStart()
 	end);
 	
 	
-	function Me:SetCurrently( text )
-		Me.frame.text:SetText( text or "" )
+	function Me:SetCurrently( text, ooc )
+      if not ooc then
+         Me.frame.text:SetText( text or "" )
+      else
+         Me.frame.textooc:SetText( text or "" )
+      end
 		Me:SaveCurrently()
 	end
 	
 	function Me:SaveCurrently()
-		local character = TRP3_API.profile.getData("player/character");
-		local old = character.CU;
-		character.CU = self.frame.text:GetText();
-		if old == character.CU then return end
-		
-		character.v = TRP3_API.utils.math.incrementNumber(character.v or 1, 2);
-		TRP3_API.events.fireEvent( 
-			TRP3_API.events.REGISTER_DATA_UPDATED,
-			TRP3_API.globals.player_id, 
-			TRP3_API.profile.getPlayerCurrentProfileID(), 
-			"character"
-		);
-		
-		local context = TRP3_API.navigation.page.getCurrentContext()
-		if context and context.isPlayer then
-			TRP3_RegisterMiscViewCurrentlyICScrollText:SetText( character.CU or "" )
-		end
+		local character = TRP3_API.profile.getData("player/character")
+		local old_cu = character.CU
+      local old_co = character.CO
+		character.CU = self.frame.text:GetText()
+      character.CO = self.frame.textooc:GetText()
+      local changed = false
+		if old_cu ~= character.CU then
+         changed = true
+         local context = TRP3_API.navigation.page.getCurrentContext()
+         if context and context.isPlayer then
+            TRP3_RegisterMiscViewCurrentlyICScrollText:SetText( character.CU or "" )
+         end
+      end
+      
+      if old_co ~= character.CO then
+         changed = true
+         local context = TRP3_API.navigation.page.getCurrentContext()
+         if context and context.isPlayer then
+            TRP3_RegisterMiscViewCurrentlyOOCScrollText:SetText( character.CO or "" )
+         end
+      end
+      
+      if changed then
+         character.v = TRP3_API.utils.math.incrementNumber(character.v or 1, 2)
+         TRP3_API.events.fireEvent( 
+            TRP3_API.events.REGISTER_DATA_UPDATED,
+            TRP3_API.globals.player_id, 
+            TRP3_API.profile.getPlayerCurrentProfileID(), 
+            "character"
+         )
+      end
 	end
 	
 	TRP3_API.events.listenToEvent( TRP3_API.events.REGISTER_DATA_UPDATED, function( player_id, profileID )
