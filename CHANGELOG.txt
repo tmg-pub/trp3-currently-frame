@@ -1,3 +1,7 @@
+## 2.3
+Shadowlands update.
+
+
 ## 2.2
 Patch 8.3 update.
 

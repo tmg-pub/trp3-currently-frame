@@ -28,6 +28,24 @@ local function onInit()
    -- Set the currently frame's caption.
    Me.frame.caption.label:SetText( L.REG_PLAYER_CURRENT )
    Me.frame.textooc.label:SetText( L.CM_OOC )
+
+   Me.frame:SetBackdrop {
+      bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background";
+      edgeFile = "Interface\\GLUES\\COMMON\\TextPanel-Border";
+      tile     = true;
+      edgeSize = 16;
+      tileSize = 380;
+      insets   = { left = 2, right = 2, top = 1, bottom = 3 };
+   }
+   
+   Me.frame.caption:SetBackdrop({
+      bgFile   = "Interface\\BankFrame\\Bank-Background";
+      edgeFile = "Interface\\GLUES\\COMMON\\TextPanel-Border";
+      tile     = true;
+      edgeSize = 16;
+      tileSize = 100;
+      insets   = { left = 4, right = 2, top = 2, bottom = 2 };
+   })
    
    Me.frame.UpdateHeight = function( self )
    
