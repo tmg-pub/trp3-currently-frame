@@ -2,5 +2,4 @@ project-id: 101494
 name: TRP3CurrentlyFrame
 version: 2.3
 export:
-  TRP3CurrentlyFrame: src       # Moves src folder to MainAddonFolder/ in the package
-  MainAddonFolder/libs: libs # Moves libs folder to MainAddonFolder/libs in the package
+  TRP3CurrentlyFrame: src
