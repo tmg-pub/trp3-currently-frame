@@ -38,14 +38,14 @@ local function onInit()
       insets   = { left = 2, right = 2, top = 1, bottom = 3 };
    }
    
-   Me.frame.caption:SetBackdrop({
+   Me.frame.caption:SetBackdrop {
       bgFile   = "Interface\\BankFrame\\Bank-Background";
       edgeFile = "Interface\\GLUES\\COMMON\\TextPanel-Border";
       tile     = true;
       edgeSize = 16;
       tileSize = 100;
       insets   = { left = 4, right = 2, top = 2, bottom = 2 };
-   })
+   }
    
    Me.frame.UpdateHeight = function( self )
    

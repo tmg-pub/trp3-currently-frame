@@ -1,4 +1,4 @@
-## Interface: 90001
+## Interface: @@toc_version_retail@@
 ## Title: TRP3 Currently Frame
 ## Title-frFR: TRP3 Cadre Actuellement
 ## Title-ptBR: TRP3 - Janela p/ o Atualmente
@@ -6,7 +6,7 @@
 ## Title-zhCN: TRP3当前状况框架
 ## Title-zhTW: TRP3當前狀況框架
 ## Title-ruRU: TRP3 В настоящее время кадр
-## Version: 2.3
+## Version: @@addon_version@@
 ## Notes: Adds a window for editing your Currently.
 ## Notes-frFR: Ajoute un fenêtre pour fair des redactions dans ton Actuellement.
 ## Notes-ptBR: Adiciona uma janela para editar o seu Atualmente.
