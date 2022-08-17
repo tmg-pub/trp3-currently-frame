@@ -1,5 +1,4 @@
 project-id: 101494
 name: TRP3CurrentlyFrame
-version: 2.3
 export:
   TRP3CurrentlyFrame: src
