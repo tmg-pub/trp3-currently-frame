@@ -202,9 +202,11 @@ local function onStart()
       local changed = false
       if old_cu ~= character.CU then
          changed = true
+         -- If the current player is being viewed, then update the UI widgets with what
+         -- we type in.
          local context = TRP3_API.navigation.page.getCurrentContext()
          if context and context.isPlayer then
-            TRP3_RegisterMiscViewCurrentlyICScrollText:SetText( character.CU or "" )
+            TRP3_RegisterMiscViewCurrentlyIC:SetText( character.CU or "" )
          end
       end
       
@@ -212,16 +214,17 @@ local function onStart()
          changed = true
          local context = TRP3_API.navigation.page.getCurrentContext()
          if context and context.isPlayer then
-            TRP3_RegisterMiscViewCurrentlyOOCScrollText:SetText( character.CO or "" )
+            TRP3_RegisterMiscViewCurrentlyOOC:SetText( character.CO or "" )
          end
       end
       
       if changed then
-         -- Update profile version (v) and then trigger an event for other
-         --  TRP handlers.
+         -- Update profile version (v) and then trigger an event for other TRP handlers.
+         -- Seems a little ugly that we are touching the version number which should
+         --  probably be left to TRP3 implementation details.
          character.v = TRP3_API.utils.math.incrementNumber(character.v or 1, 2)
-         TRP3_API.events.fireEvent( 
-            TRP3_API.events.REGISTER_DATA_UPDATED,
+         TRP3_Addon:TriggerEvent( 
+            TRP3_Addon.Events.REGISTER_DATA_UPDATED,
             TRP3_API.globals.player_id, 
             TRP3_API.profile.getPlayerCurrentProfileID(), 
             "character"
@@ -229,8 +232,8 @@ local function onStart()
       end
    end
    
-   TRP3_API.events.listenToEvent( TRP3_API.events.REGISTER_DATA_UPDATED,
-                                               function( player_id, profileID )
+   TRP3_API.RegisterCallback(TRP3_Addon, TRP3_Addon.Events.REGISTER_DATA_UPDATED,
+                                               function(self, player_id, profileID)
       if player_id == TRP3_API.globals.player_id then
          updateFrame()
       end
@@ -238,8 +241,8 @@ local function onStart()
    
    -- 1.6 offers support for ElvUI skinning. It's kind of wonky how this is
    --  done, but it works out...
-   TRP3_API.Events.registerCallback(
-                                TRP3_API.Events.WORKFLOW_ON_FINISH, function()
+   TRP3_API.RegisterCallback(TRP3_Addon,
+                                TRP3_Addon.Events.WORKFLOW_ON_FINISH, function()
       -- Check if the ElvUI support module is loaded. We're using it to
       --  determine if we want to skin ourselves or not. It's not the most 
       --  intuitive thing - piggybacking off of the "target frame" skinning,
