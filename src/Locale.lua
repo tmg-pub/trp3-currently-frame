@@ -8,8 +8,8 @@ local Locales = {
       CURFRAME_ADDON_NOTES = "Adds a window for editing your Currently.";
       -- The title of the addon.
       CURFRAME_ADDON_TITLE = "TRP3 Currently Frame";
-      -- The title of this addon's section in the Frames settings.
-      CURFRAME_CO_HEADER = "Currently frame";
+		-- Description on the add-on settings page.
+		CURFRAME_CO_DESCRIPTION = "These settings are for the TRP3 Currently Frame addon and not the official/built-in currently frame.";
       -- The title of the "Show frame" option.
       CURFRAME_CO_SHOW_FRAME = "Show frame";
       -- The tooltip text for the "Show frame" option.

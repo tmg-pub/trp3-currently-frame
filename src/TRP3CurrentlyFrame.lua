@@ -14,6 +14,8 @@ local CONFIG_POS_A     = "CONFIG_TRP3CURRENTLYFRAME_POS_A";
 local CONFIG_SHOW      = "CONFIG_TRP3CURRENTLYFRAME_SHOW";
 local CONFIG_SHOW_OOC  = "CONFIG_TRP3CURRENTLYFRAME_SHOW_OOC";
 
+local CONFIG_KEY       = "CONFIG_CURRENTLYFRAME_PAGE";
+
 -------------------------------------------------------------------------------
 -- Called when the module is initialized.
 --
@@ -26,7 +28,7 @@ local function onInit()
    Me.frame.host = Me
    
    -- Set the currently frame's caption.
-   Me.frame.caption.label:SetText( L.REG_PLAYER_CURRENT )
+   Me.frame.caption.label:SetText( L.CURRENTLY_TITLE )
    Me.frame.textooc.label:SetText( L.CM_OOC )
 
    Me.frame:SetBackdrop {
@@ -125,27 +127,35 @@ local function onStart()
    TRP3_API.configuration.registerConfigKey( CONFIG_POS_Y, -60 );
    TRP3_API.configuration.registerConfigKey( CONFIG_SHOW, true );
    TRP3_API.configuration.registerConfigKey( CONFIG_SHOW_OOC, false );
-   
-   -- Build configuration page (todo: localization)
-   tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
-      inherit = "TRP3_ConfigH1";
-      title   = L.CURFRAME_CO_HEADER;
-   });
-   
-   tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
-      inherit   = "TRP3_ConfigCheck";
-      title     = L.CURFRAME_CO_SHOW_FRAME;
-      help      = L.CURFRAME_CO_SHOW_FRAME_HELP;
-      configKey = CONFIG_SHOW;
-   });
-   
-   tinsert( TRP3_API.configuration.CONFIG_FRAME_PAGE.elements, {
-      inherit   = "TRP3_ConfigCheck";
-      title     = L.CURFRAME_CO_SHOW_OOC;
-      help      = L.CURFRAME_CO_SHOW_OOC_HELP;
-      configKey = CONFIG_SHOW_OOC;
-   });
-   
+
+
+   local configPage = {
+      id = "module_config_currentlyframe";
+      title = L.CURFRAME_ADDON_TITLE;
+      menuText = L.CURFRAME_ADDON_TITLE;
+      pageText = L.CURFRAME_ADDON_TITLE;
+      elements = {
+         {
+            inherit = "TRP3_ConfigParagraph",
+            title = L.CURFRAME_CO_DESCRIPTION,
+         },
+         {
+            inherit   = "TRP3_ConfigCheck";
+            title     = L.CURFRAME_CO_SHOW_FRAME;
+            help      = L.CURFRAME_CO_SHOW_FRAME_HELP;
+            configKey = CONFIG_SHOW;
+         };
+         {
+            inherit   = "TRP3_ConfigCheck";
+            title     = L.CURFRAME_CO_SHOW_OOC;
+            help      = L.CURFRAME_CO_SHOW_OOC_HELP;
+            configKey = CONFIG_SHOW_OOC;
+         };
+      };
+   }
+
+   TRP3_API.configuration.registerConfigurationPage(configPage);
+
    -- handler for when the show toggle is changed.
    TRP3_API.configuration.registerHandler( CONFIG_SHOW, updateFrame )
    TRP3_API.configuration.registerHandler( CONFIG_SHOW_OOC, updateFrame )
