@@ -315,13 +315,13 @@ local MODULE_INFO = {
 
    -- copy info over from the TOC file
    --
-   ["name"]        = GetAddOnMetadata( addonName, "Title" );
-   ["description"] = GetAddOnMetadata( addonName, "Notes" );
+   ["name"]        = C_AddOns.GetAddOnMetadata( addonName, "Title" );
+   ["description"] = C_AddOns.GetAddOnMetadata( addonName, "Notes" );
    
    -- we are cutting off the minor version for the two-figure version number
    -- in the module
    --
-   ["version"]     = tonumber( GetAddOnMetadata( addonName, "Version" ):match("^%d+%.%d+") );
+   ["version"]     = tonumber( C_AddOns.GetAddOnMetadata( addonName, "Version" ):match("^%d+%.%d+") );
    
    ["id"]          = "trp3_currently_frame";
    ["onStart"]     = onStart;
