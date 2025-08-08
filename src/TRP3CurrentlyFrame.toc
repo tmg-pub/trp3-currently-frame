@@ -1,4 +1,4 @@
-## Interface: @@toc_version_retail@@
+## Interface: 110200
 ## Title: TRP3 Currently Frame
 ## Title-frFR: TRP3 Cadre Actuellement
 ## Title-ptBR: TRP3 - Janela p/ o Atualmente
